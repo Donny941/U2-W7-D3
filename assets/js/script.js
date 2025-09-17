@@ -43,7 +43,6 @@ const bookList = () => {
   };
   fetch("https://striveschool-api.herokuapp.com/books")
     .then((response) => {
-      // console.log(response);
       if (response.ok) {
         return response.json();
       } else {
@@ -51,10 +50,7 @@ const bookList = () => {
       }
     })
     .then((booksObj) => {
-      // console.log(booksObj);
-
       const row = document.querySelector(".row");
-      // console.log(row);
 
       booksObj.forEach((book) => {
         // console.log(book);

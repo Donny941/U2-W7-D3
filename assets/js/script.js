@@ -46,7 +46,7 @@ const bookList = () => {
       if (response.ok) {
         return response.json();
       } else {
-        throw new Error("nessun libro trovato");
+        throw new Error("No book found...");
       }
     })
     .then((booksObj) => {

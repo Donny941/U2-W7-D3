@@ -1,6 +1,46 @@
 // https://striveschool-api.herokuapp.com/books fetch
 
 const bookList = () => {
+  const cartUl = document.querySelector(".dropdown-menu");
+
+  let inCart = JSON.parse(localStorage.getItem("books")) || [];
+
+  const createCartItem = (book) => {
+    if (inCart.findIndex((item) => item.title === book.title) !== -1) {
+      alert("This book is already in the Cart!");
+      return;
+    }
+
+    const liDiv = document.createElement("div");
+    liDiv.classList.add("listed", "d-flex", "justify-content-between");
+    const cartLi = document.createElement("li");
+    const deleteItem = document.createElement("button");
+    deleteItem.classList.add("btn", "btn-danger");
+    deleteItem.innerHTML = `  <i class="bi bi-trash"></i>`;
+    cartLi.innerText = book.title;
+    liDiv.append(cartLi, deleteItem);
+    inCart.push(book);
+    cartUl.appendChild(liDiv);
+    console.log(inCart);
+    localStorage.setItem("books", JSON.stringify(inCart));
+
+    deleteItem.addEventListener("click", (event) => {
+      event.target.closest(".listed").remove();
+      const bookIndex = inCart.findIndex(
+        (book) => book.title === cartLi.innerText
+      );
+      console.log(inCart);
+
+      if (bookIndex !== -1) {
+        inCart.splice(bookIndex, 1);
+        if (inCart.length === 0) {
+          localStorage.removeItem("books");
+        } else {
+          localStorage.setItem("books", JSON.stringify(inCart));
+        }
+      }
+    });
+  };
   fetch("https://striveschool-api.herokuapp.com/books")
     .then((response) => {
       // console.log(response);
@@ -11,13 +51,13 @@ const bookList = () => {
       }
     })
     .then((booksObj) => {
-      console.log(booksObj);
+      // console.log(booksObj);
 
       const row = document.querySelector(".row");
       // console.log(row);
 
       booksObj.forEach((book) => {
-        console.log(book);
+        // console.log(book);
         const col = document.createElement("div");
         col.className = "col";
         const card = document.createElement("div");
@@ -51,7 +91,7 @@ const bookList = () => {
         cardCategory.innerText = book.category;
 
         const divButton = document.createElement("div");
-        divButton.classList.add("d-flex", "gap-2");
+        divButton.classList.add("d-flex", "gap-2", "justify-content-between");
         const cardButtonCart = document.createElement("button");
         cardButtonCart.classList.add("btn", "btn-primary");
         cardButtonCart.innerHTML = "Add to Cart";
@@ -67,6 +107,15 @@ const bookList = () => {
         col.append(card);
 
         row.append(col);
+
+        // DeleteCard
+        cardButtonDelete.addEventListener("click", () => {
+          col.remove();
+        });
+
+        cardButtonCart.addEventListener("click", () => {
+          createCartItem(book);
+        });
       });
     })
 
